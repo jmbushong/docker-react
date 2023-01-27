@@ -1,17 +1,18 @@
 name: Deploy Frontend
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
+  pull-request:
+    branches: ["main"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
-      - run: docker build -t jmbushong/docker-react -f Dockerfile.dev .
-      - run: docker run -e CI=true jmbushong/docker-react npm test
-
+      - name: Build the Docker image
+        run: docker build -t jmbushong/docker-react -f Dockerfile.dev .
+      - name: Run tests
+        run: docker run -e CI=true jmbushong/docker-react npm test
       - name: Generate deployment package
         run: zip -r deploy.zip . -x '*.git*'
